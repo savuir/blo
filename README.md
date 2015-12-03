@@ -1,0 +1,2 @@
+# blo
+Static blog generator
