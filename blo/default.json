@@ -1,0 +1,14 @@
+{
+    "render_dir": ".",
+    "template_dir": "_blog/templates",
+    "pages_dir": "_blog/pages",
+    "site": {
+        "url": ".github.io",
+        "title": "Tech blog",
+        "briefing": "Welcome to my blog, I write about what I like"
+    },
+    "draft_templates": {
+        "post": {"content": "title: Post title here\nbriefing: A brief description of post.\ndate_time: {date_time}\nslug: {slug}\ntags: \ntype: post\n\n\n", "url": "{page_date}/{page_slug}.html"},
+        "page": {"content": "title: Page title here\nbriefing: A brief description of page.\nslug: {slug}\ntags: \ntype: page\n\n\n", "url": "{page_slug}.html"}
+    }
+}
