@@ -14,7 +14,6 @@ import BaseHTTPServer
 
 
 PREVIEW_FIELDS = ['page_title', 'page_tags', 'page_briefing', 'page_date_time']
-DATETIME_FORMAT = "%Y-%m-%d %H:%M"
 
 
 class ContentAggregator:
@@ -31,6 +30,12 @@ class ContentAggregator:
             pages_list.append(page_vars)
         return sorted(pages_list, key=lambda x: x['page_date_time'])
 
+    def get_tags_list(self):
+        return sorted([{"page_url": "/tag/{0}.html".format(tag),
+                        "page_title": tag,
+                        "page_brefing": len(items)}
+                       for tag, items in self.tags.iteritems()])
+
 
 class BlogAction:
     def __init__(self, config):
@@ -44,17 +49,27 @@ class BlogAction:
         os.chdir(self.config["render_dir"])
         server_addr = ('localhost', 8000)
         request_handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-        httpd = BaseHTTPServer.HTTPServer (server_addr, request_handler)
+        httpd = BaseHTTPServer.HTTPServer(server_addr, request_handler)
         httpd.serve_forever()
 
-    def _generate_html_tag(self, tag, page_list):
+    def _generate_html(self, template_name, page_vars):
+        template = self.jinja_env.get_template('{0}.html'.format(template_name))
+        page_vars.update({"site_{0}".format(k): v for k, v in self.config['site'].iteritems()})
+        return template.render(page_vars)
+
+    def _generate_html_tag_list(self):
         page_vars = {
-            'page_title': tag,
+            'page_title': "List of tags",
+            'page_items': self.content_aggregator.get_tags_list()
+        }
+        return self._generate_html('stat', page_vars)
+
+    def _generate_html_tag(self, tag):
+        page_vars = {
+            'page_title': "Posts with tag '{0}'".format(tag),
             'page_items': self.content_aggregator.get_content_items(tag)
         }
-        template = self.jinja_env.get_template('list.html')
-        html_page = template.render(page_vars)
-        return html_page
+        return self._generate_html('list', page_vars)
 
     def _generate_html_index(self):
         page_vars = {
@@ -62,9 +77,7 @@ class BlogAction:
             'page_briefing': self.config['site']['briefing'],
             'page_items': self.content_aggregator.get_content_items()
         }
-        template = self.jinja_env.get_template('list.html')
-        html_page = template.render(page_vars)
-        return html_page
+        return self._generate_html('list', page_vars)
 
     def _generate_html_page_and_path(self, content):
         """
@@ -78,12 +91,10 @@ class BlogAction:
         page_vars['page_content'] = page_html
         page_vars['page_date'] = page_vars['page_date_time'].split(' ')[0]
         page_vars['page_tags'] = page_vars['page_tags'].split(', ')
-        page_vars['page_date_time'] = datetime.strptime(page_vars['page_date_time'], DATETIME_FORMAT)
-        page_vars.update({"site_{0}".format(k): v for k, v in self.config['site'].iteritems()})
+        page_vars['page_date_time'] = datetime.strptime(page_vars['page_date_time'], self.config['date_format'])
 
         # generate html page content
-        template = self.jinja_env.get_template('{0}.html'.format(page_vars['page_type']))
-        html_page = template.render(page_vars)
+        html_page = self._generate_html(page_vars['page_type'], page_vars)
 
         # generate relative path of page
         html_page_path = self.config['draft_templates'][page_vars['page_type']]['url'].format(**page_vars)
@@ -126,15 +137,18 @@ class BlogAction:
 
         # render tags lists
         for tag, page_list in self.content_aggregator.tags.iteritems():
-            html_page = self._generate_html_tag(tag, page_list)
-            self._create_html_file(html_page, 'tag/{0}.html'.format(tag))
+            html_page = self._generate_html_tag(tag)
+            self._create_html_file(html_page, 'tag/{0}.html'.format(tag.replace(' ','-')))
+        # render tags list page
+        html_page = self._generate_html_tag_list()
+        self._create_html_file(html_page, 'tags.html')
 
     def post(self, slug, draft_type):
         """ Make a new page draft with given slug """
         now = datetime.now()
         draft_path = os.path.join(self.config['pages_dir'], 
                                   now.strftime("%Y-%m-%d__") + slug + '.md')
-        date_time = now.strftime(DATETIME_FORMAT)
+        date_time = now.strftime(self.config['date_format'])
         with open(draft_path, 'w') as f:
             f.write(self.config['draft_templates'][draft_type]['content']
                     .format(slug=slug, date_time=date_time))

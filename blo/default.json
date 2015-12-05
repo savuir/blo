@@ -5,8 +5,17 @@
     "site": {
         "url": ".github.io",
         "title": "Tech blog",
-        "briefing": "Welcome to my blog, I write about what I like"
+        "briefing": "Welcome to my blog, I write about what I like",
+        "links": {
+          "About": "/about.html",
+          "Projects": "/projects.html"
+        },
+        "footer_links": {
+          "GitHub": "#",
+          "Instagram": "#"
+        }
     },
+    "date_format": "%Y-%m-%d %H:%M",
     "draft_templates": {
         "post": {"content": "title: Post title here\nbriefing: A brief description of post.\ndate_time: {date_time}\nslug: {slug}\ntags: \ntype: post\n\n\n", "url": "{page_date}/{page_slug}.html"},
         "page": {"content": "title: Page title here\nbriefing: A brief description of page.\nslug: {slug}\ntags: \ntype: page\n\n\n", "url": "{page_slug}.html"}
