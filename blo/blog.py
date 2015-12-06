@@ -21,6 +21,7 @@ class BlogAction:
         server_addr = ('localhost', 8000)
         request_handler = SimpleHTTPServer.SimpleHTTPRequestHandler
         httpd = BaseHTTPServer.HTTPServer(server_addr, request_handler)
+        print("Serving at http://{0}:{1}".format(*server_addr))
         httpd.serve_forever()
 
     def build(self):
@@ -48,7 +49,7 @@ def create_blog(blog_dir):
     engine_path = os.path.dirname(os.path.realpath(__file__))
     shutil.copytree(os.path.join(engine_path, 'templates'), os.path.join(blog_path, 'templates'))
     shutil.copyfile(os.path.join(engine_path, 'default.json'), os.path.join(blog_path, 'default.json'))
-    print("Blog created. cd {0} && blo post hello-worlds".format(blog_dir))
+    print("Blog created. \ncd {0} && blo post hello-worlds".format(blog_dir))
 
 
 def parse_args():
