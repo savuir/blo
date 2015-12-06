@@ -1,5 +1,8 @@
 # blo
-Static blog generator
+Static blog generator.
+
+## Features
+ * Simple and configurable though JSON
 
 ## Installation
 
@@ -13,15 +16,15 @@ Create a new blog:
 
 Create a new page orr post:
 
-     blog post hello-world
+     blo post hello-world
 
 Build blog:
 
-     blog build
+     blo build
 
 Run blog locally:
 
-     blog serve
+     blo serve
 
 ## Architecture
  * Blog config
