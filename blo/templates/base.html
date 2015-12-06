@@ -62,11 +62,14 @@
               </ul>
             </div>
             <div class="col-md-4">
+              {% if site_footer_links %}
               <strong>See also</strong>
               <ul>
-                <li><a href="#">Github</a></li>
-                <li><a href="#">Instagram</a></li>
+                {% for title, link in site_footer_links.iteritems() %}
+                    <li><a href="{{ link }}">{{ title }}</a></li>
+                {% endfor %}
               </ul>
+              {% endif %}
             </div>
             <div class="col-md-4">
               <p class="text-center"><small>{{ site_url }} &copy; 2015</small></p>
