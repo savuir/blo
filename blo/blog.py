@@ -37,20 +37,14 @@ class ContentAggregator:
                        for tag, items in self.tags.iteritems()])
 
 
-class BlogAction:
+class PageGenerator:
     def __init__(self, config):
         self.config = config
-        self.jinja_env = None
-        self.md = None
+        self.jinja_env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(self.config['template_dir']))
+        self.md = markdown.Markdown(extensions=['markdown.extensions.meta',
+                                                'markdown.extensions.codehilite'])
         self.content_aggregator = ContentAggregator()
-
-    def serve(self):
-        """ Run web-server to test static site """
-        os.chdir(self.config["render_dir"])
-        server_addr = ('localhost', 8000)
-        request_handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-        httpd = BaseHTTPServer.HTTPServer(server_addr, request_handler)
-        httpd.serve_forever()
 
     def _generate_html(self, template_name, page_vars):
         template = self.jinja_env.get_template('{0}.html'.format(template_name))
@@ -116,13 +110,7 @@ class BlogAction:
         with codecs.open(file_path, 'w', 'utf-8') as html_file:
             html_file.write(html_page)
 
-    def build(self):
-        """ Generate finalized html. Also fill metadata for new drafts """
-        
-        self.jinja_env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader(self.config['template_dir']))
-        self.md = markdown.Markdown(extensions=['markdown.extensions.meta',
-                                                'markdown.extensions.codehilite'])
+    def generate_all(self):
         # render page
         for draft in os.listdir(self.config['pages_dir']):
             with open(os.path.join(self.config['pages_dir'], draft)) as f:
@@ -138,10 +126,28 @@ class BlogAction:
         # render tags lists
         for tag, page_list in self.content_aggregator.tags.iteritems():
             html_page = self._generate_html_tag(tag)
-            self._create_html_file(html_page, 'tag/{0}.html'.format(tag.replace(' ','-')))
+            self._create_html_file(html_page, 'tag/{0}.html'.format(tag.replace(' ', '-')))
         # render tags list page
         html_page = self._generate_html_tag_list()
         self._create_html_file(html_page, 'tags.html')
+
+
+class BlogAction:
+    def __init__(self, config):
+        self.config = config
+
+    def serve(self):
+        """ Run web-server to test static site """
+        os.chdir(self.config["render_dir"])
+        server_addr = ('localhost', 8000)
+        request_handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+        httpd = BaseHTTPServer.HTTPServer(server_addr, request_handler)
+        httpd.serve_forever()
+
+    def build(self):
+        """ Generate finalized html. Also fill metadata for new drafts """
+        page_generator = PageGenerator(self.config)
+        page_generator.generate_all()
 
     def post(self, slug, draft_type):
         """ Make a new page draft with given slug """
