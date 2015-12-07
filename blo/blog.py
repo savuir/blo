@@ -78,6 +78,9 @@ def main():
 
     config_path = os.path.join(os.getcwd(), '_blog', opts.config)
     config = json.load(open(config_path))
+    draft_templates_path = os.path.join(os.getcwd(), '_blog', 'draft_templates.json')
+    config['draft_templates'] = json.load(open(draft_templates_path))
+
     blog_action = BlogAction(config)
     if opts.action[0] == 'build':
         blog_action.build()
