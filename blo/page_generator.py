@@ -7,6 +7,7 @@ from datetime import datetime
 
 import jinja2
 import markdown
+import PyRSS2Gen
 
 from content_aggregator import ContentAggregator
 
@@ -27,6 +28,26 @@ class PageGenerator:
         template = self.jinja_env.get_template('{0}.html'.format(template_name))
         page_vars.update({"site_{0}".format(k): v for k, v in self.config['site'].iteritems()})
         return template.render(page_vars)
+
+    def _generate_xml_rss(self):
+        posts = []
+        for link, content in self.content_aggregator.get_latest_posts().iteritems():
+            link = "{0}/{1}".format(self.config['site']['url'], link)
+            posts.append(
+                PyRSS2Gen.RSSItem(
+                title=content['page_title'],
+                link=link,
+                description=content['page_briefing'],
+                guid=PyRSS2Gen.Guid(link),
+                pubDate=content['page_date_time'])
+            )
+        return PyRSS2Gen.RSS2(
+            title=self.config['site']['title'],
+            link=self.config['site']['url'],
+            description=self.config['site']['briefing'],
+            lastBuildDate=datetime.now(),
+            items=posts
+        )
 
     def _generate_html_tag_list(self):
         page_vars = {
@@ -90,6 +111,14 @@ class PageGenerator:
         with codecs.open(file_path, 'w', 'utf-8') as html_file:
             html_file.write(html_page)
 
+    def _create_rss_file(self, rss_page, rss_file_path):
+        file_path = os.path.join(self.config["render_dir"], rss_file_path)
+        html_page_dir = os.path.dirname(os.path.realpath(file_path))
+        if not os.path.exists(html_page_dir):
+            os.makedirs(html_page_dir)
+        with codecs.open(file_path, 'w', 'utf-8') as rss_file:
+            rss_page.write_xml(rss_file)
+
     def generate_all(self):
         # render page
         for draft in os.listdir(self.config['pages_dir']):
@@ -112,3 +141,7 @@ class PageGenerator:
         # render tags list page
         html_page = self._generate_html_tag_list()
         self._create_html_file(html_page, 'tags.html')
+
+        # render rss
+        xml_page = self._generate_xml_rss()
+        self._create_rss_file(xml_page, 'rss.xml')

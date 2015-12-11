@@ -1,13 +1,15 @@
 """
 Module for content aggregation to give data
 """
-from collections import defaultdict
+import collections
+
+ITEMS_PER_PAGE = 20
 
 
 class ContentAggregator:
     def __init__(self):
-        self.tags = defaultdict(list)
-        self.content = defaultdict(dict)
+        self.tags = collections.defaultdict(list)
+        self.content = collections.defaultdict(dict)
 
     def get_content_items(self, tag=None):
         pages_list = []
@@ -23,3 +25,9 @@ class ContentAggregator:
                         "page_title": tag,
                         "page_brefing": len(items)}
                        for tag, items in self.tags.iteritems()])
+
+    def get_latest_posts(self, number=ITEMS_PER_PAGE):
+        posts = sorted(self.content.items(),
+                       key=lambda x: x[1]['page_date_time'])[:ITEMS_PER_PAGE]
+        return collections.OrderedDict(posts)
+
