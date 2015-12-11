@@ -48,7 +48,12 @@ def create_blog(blog_dir):
 
     engine_path = os.path.dirname(os.path.realpath(__file__))
     shutil.copytree(os.path.join(engine_path, 'templates'), os.path.join(blog_path, 'templates'))
-    shutil.copyfile(os.path.join(engine_path, 'default.json'), os.path.join(blog_path, 'default.json'))
+    shutil.copyfile(
+        os.path.join(engine_path, 'default.json'),
+         os.path.join(blog_path, 'default.json'))
+    shutil.copyfile(
+        os.path.join(engine_path, 'draft_templates.json'),
+        os.path.join(blog_path, 'draft_templates.json'))
     print("Blog created. \ncd {0} && blo post hello-worlds".format(blog_dir))
 
 
@@ -71,10 +76,10 @@ def main():
     if opts.action[0] == 'create':
         if len(opts.action) == 1:
             print("Add blog folder name")
-            sys.exit(1)
+            return 1
         blog_dir = unicode(opts.action[1], 'utf-8')
         create_blog(blog_dir)
-        sys.exit()
+        return 0
 
     config_path = os.path.join(os.getcwd(), '_blog', opts.config)
     config = json.load(open(config_path))
@@ -92,4 +97,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

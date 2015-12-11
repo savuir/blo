@@ -1,11 +1,12 @@
 """
 Module for html page generation using drafts.
 """
+import codecs
 import os
+from datetime import datetime
+
 import jinja2
 import markdown
-import codecs
-from datetime import datetime
 
 from content_aggregator import ContentAggregator
 
