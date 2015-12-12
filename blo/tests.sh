@@ -8,7 +8,7 @@ python ../blog.py build
 
 tree
 
-timeout 5 python ../blog.py serve
+python ../blog.py serve
 
 cd ../
 rm -rf testblog

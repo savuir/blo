@@ -83,7 +83,7 @@ class PageGenerator:
         page_vars['page_content'] = page_html
         page_vars['page_author'] = self.config['site']['author']
         page_vars['page_date'] = page_vars['page_date_time'].split(' ')[0]
-        page_vars['page_tags'] = page_vars['page_tags'].split(', ')
+        page_vars['page_tags'] = [tag for tag in page_vars['page_tags'].split(', ') if tag]
         page_vars['page_date_time'] = \
             datetime.strptime(page_vars['page_date_time'],
                               self.config['date_format'])
