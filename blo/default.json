@@ -3,16 +3,15 @@
     "template_dir": "_blog/templates",
     "pages_dir": "_blog/pages",
     "site": {
-        "url": ".github.io",
+        "url": "username.github.io",
         "title": "Tech blog",
+        "author": "My name",
         "briefing": "Welcome to my blog, I write about what I like",
         "links": {
-          "About": "/about.html",
-          "Projects": "/projects.html"
+          "About": "/about.html"
         },
         "footer_links": {
-          "GitHub": "#",
-          "Instagram": "#"
+          "GitHub": "#"
         }
     },
     "date_format": "%Y-%m-%d %H:%M"

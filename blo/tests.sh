@@ -6,6 +6,8 @@ cd testblog
 python ../blog.py post hello-worlds
 python ../blog.py build
 
+tree
+
 timeout 5 python ../blog.py serve
 
 cd ../

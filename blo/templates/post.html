@@ -13,5 +13,5 @@
       {% for tag in page_tags %}
         <a href="/tag/{{ tag|replace(' ', '-') }}.html"><span class="label label-default">{{ tag }}</span></a> 
       {% endfor %}
-      {% if page_date %} <p class="text-right">Posted on {{ page_date }}</p> {% endif %}</small>
+      {% if page_date %} <p class="text-right">Posted on {{ page_date }} by {{ page_author }}</p> {% endif %}</small>
 {% endblock %}

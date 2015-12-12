@@ -4,11 +4,15 @@ import json
 import argparse
 import shutil
 from datetime import datetime
+import logging
 
 import SimpleHTTPServer
 import BaseHTTPServer
 
 from page_generator import PageGenerator
+
+
+log = logging.getLogger(__name__)
 
 
 class BlogAction:
@@ -21,7 +25,7 @@ class BlogAction:
         server_addr = ('localhost', 8000)
         request_handler = SimpleHTTPServer.SimpleHTTPRequestHandler
         httpd = BaseHTTPServer.HTTPServer(server_addr, request_handler)
-        print("Serving at http://{0}:{1}".format(*server_addr))
+        log.info("Serving at http://{0}:{1}".format(*server_addr))
         httpd.serve_forever()
 
     def build(self):
@@ -38,7 +42,7 @@ class BlogAction:
         with open(draft_path, 'w') as f:
             f.write(self.config['draft_templates'][draft_type]['content']
                     .format(slug=slug, date_time=date_time))
-        print("subl {0}".format(draft_path))
+        log.info(draft_path)
 
 
 def create_blog(blog_dir):
@@ -54,7 +58,7 @@ def create_blog(blog_dir):
     shutil.copyfile(
         os.path.join(engine_path, 'draft_templates.json'),
         os.path.join(blog_path, 'draft_templates.json'))
-    print("Blog created. \ncd {0} && blo post hello-worlds".format(blog_dir))
+    log.info("Blog created. \ncd {0} && blo post hello-worlds".format(blog_dir))
 
 
 def parse_args():
@@ -75,7 +79,7 @@ def main():
     opts = parse_args()
     if opts.action[0] == 'create':
         if len(opts.action) == 1:
-            print("Add blog folder name")
+            log.info("Add blog folder name")
             return 1
         blog_dir = unicode(opts.action[1], 'utf-8')
         create_blog(blog_dir)
@@ -97,4 +101,6 @@ def main():
 
 
 if __name__ == "__main__":
+    log.addHandler(logging.StreamHandler(sys.stdout))
+    log.setLevel(logging.DEBUG)
     sys.exit(main())

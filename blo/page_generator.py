@@ -81,6 +81,7 @@ class PageGenerator:
         page_html = self.md.convert(content)
         page_vars = {"page_{0}".format(k): v[0] for k, v in self.md.Meta.iteritems()}
         page_vars['page_content'] = page_html
+        page_vars['page_author'] = self.config['site']['author']
         page_vars['page_date'] = page_vars['page_date_time'].split(' ')[0]
         page_vars['page_tags'] = page_vars['page_tags'].split(', ')
         page_vars['page_date_time'] = \
