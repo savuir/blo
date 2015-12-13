@@ -5,6 +5,8 @@ echo "Script for smoke testing, creates, makes posts, builds, and serves blog"
 python blog.py create testblog
 cd testblog
 
+python ../blog.py post about --type page
+
 python ../blog.py post hello-worlds
 echo "title: Hello worlds 2
 briefing: A good story A brief description of page.
