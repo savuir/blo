@@ -12,9 +12,6 @@ import PyRSS2Gen
 from content_aggregator import ContentAggregator
 
 
-PREVIEW_FIELDS = ['page_title', 'page_tags', 'page_briefing', 'page_date_time']
-
-
 class PageGenerator:
     def __init__(self, config):
         self.config = config
@@ -89,18 +86,18 @@ class PageGenerator:
                               self.config['date_format'])
         page_type = page_vars.get('page_type', 'post')
 
-        # generate html page content
-        html_page = self._generate_html(page_type, page_vars)
-
         # generate relative path of page
         html_page_path = self.config['draft_templates'][page_type]['url'].format(**page_vars)
+        page_vars['page_url'] = html_page_path
+
+        # generate html page content
+        html_page = self._generate_html(page_type, page_vars)
 
         # collect aggregations
         if page_vars['page_type'] == 'post':
             for tag in page_vars['page_tags']:
                 self.content_aggregator.tags[tag].append(html_page_path)
-            self.content_aggregator.content[html_page_path] = \
-                {k: v for k, v in page_vars.iteritems() if k in PREVIEW_FIELDS}
+            self.content_aggregator.content[html_page_path] = page_vars
 
         return html_page, html_page_path
 

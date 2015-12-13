@@ -24,7 +24,7 @@ class ContentAggregator:
         return sorted([{"page_url": "/tag/{0}.html".format(tag),
                         "page_title": tag,
                         "page_brefing": len(items)}
-                       for tag, items in self.tags.iteritems()])
+                       for tag, items in self.tags.iteritems()], reverse=True)
 
     def get_latest_posts(self, number=ITEMS_PER_PAGE):
         posts = sorted(self.content.items(),
