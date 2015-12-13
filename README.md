@@ -1,6 +1,6 @@
 # Blo
 
-**Blo** (*blog + bro*) - yet another static site generator for personal blogs. The aim is to make a really easy tool for creating new notes and customize blog. Do less actions and have much oppotiunity to make a unique site.
+**Blo** (*blog + bro*) - yet another static site generator for personal blogs. The aim is to make a really easy tool for creating new notes and customizing your site. Do less actions and have much opportunity to make a unique site.
 
 ## Features
 
