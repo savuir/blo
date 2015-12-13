@@ -41,7 +41,7 @@ Run blog locally:
 
      blo serve
      
-## Configurate
+## Configure
 
 Global site variables and technical paths are in `default.json`.
 
