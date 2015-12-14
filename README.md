@@ -17,6 +17,10 @@
 
 ## Installation
 
+     pip install blo
+
+Or download repo and execute:
+
      python setup.py install
 
 ## Usage
