@@ -10,7 +10,7 @@
  * Page templates: easy HTML/Jinja2 customize and improve.
  * SEO friendly (as I could make it).
  * Microformats for better snippets in Google/Bing/etc.
- * Markdown with use of meta-tags to customize pages more with diffirent data.
+ * Markdown with use of meta-tags to customize pages more with different data.
  * Code highlight with Pygments.
  * RSS feed generation
 
