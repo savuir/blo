@@ -1,7 +1,5 @@
 from setuptools import setup, find_packages
 
-with open('requirements.txt') as f:
-    install_requires = f.read().split('\n')
 
 setup(
     name='blo',
@@ -15,7 +13,7 @@ setup(
             'blo = blo.blog:main',
         ],
     },
-    install_requires=install_requires,
+    install_requires=['jinja2', 'markdown', 'PyRSS2Gen'],
     package_data={'': ['blo/default.json', 'blo/draft_templates.json',]},
     include_package_data=True,
     url='https://github.com/savuir/blo',  # use the URL to the github repo
