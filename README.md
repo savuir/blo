@@ -6,16 +6,20 @@
 
  * Comfortable cli control.
  * Easy config edit in JSON files.
- * Drafts templates: defult content for new notes, useful for planning new posts.
+ * Drafts templates: default content for new notes, useful for planning new posts.
  * Page templates: easy HTML/Jinja2 customize and improve.
  * SEO friendly (as I could make it).
  * Microformats for better snippets in Google/Bing/etc.
- * Markdown with use of meta-tags to customize pages more with diffirent data.
+ * Markdown with use of meta-tags to customize pages more with different data.
  * Code highlight with Pygments.
  * RSS feed generation
 
 
 ## Installation
+
+     pip install blo
+
+Or download repo and execute:
 
      python setup.py install
 
