@@ -8,7 +8,7 @@
       <p class="lead">{{ page_brefing }}</p>
     </div>
       {% for item in page_items %}
-        <h2><a href="{{ item['page_url'] }}">{{ item['page_title'] }}</a></h2>
+        <h2><a href="/{{ item['page_url'] }}">{{ item['page_title'] }}</a></h2>
         <small>
             {% for tag in item['page_tags'] %}
                 <a href="/tag/{{ tag|replace(' ', '-') }}.html">
