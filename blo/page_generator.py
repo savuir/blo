@@ -75,7 +75,7 @@ class PageGenerator:
         :return:
         """
         # collect page variables
-        page_html = self.md.convert(content)
+        page_html = self.md.convert(content.decode('utf-8'))
         page_vars = {"page_{0}".format(k): v[0] for k, v in self.md.Meta.iteritems()}
         page_vars['page_content'] = page_html
         page_vars['page_author'] = self.config['site']['author']
@@ -115,8 +115,8 @@ class PageGenerator:
         html_page_dir = os.path.dirname(os.path.realpath(file_path))
         if not os.path.exists(html_page_dir):
             os.makedirs(html_page_dir)
-        with codecs.open(file_path, 'w', 'utf-8') as rss_file:
-            rss_page.write_xml(rss_file)
+        with open(file_path, 'w') as rss_file:
+            rss_page.write_xml(rss_file, encoding='utf-8')
 
     def generate_all(self):
         # render page
