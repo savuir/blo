@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='blo',
-    version='0.3',
+    version='0.4',
     license='BSD-3-clause',
     author='Yann Savuir',
     author_email='savuir@gmail.com',
