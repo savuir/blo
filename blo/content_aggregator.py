@@ -18,16 +18,21 @@ class ContentAggregator:
                 continue
             page_vars['page_url'] = page_url
             pages_list.append(page_vars)
-        return sorted(pages_list, key=lambda x: x['page_date_time'])
+        return sorted(pages_list,
+                      key=lambda x: x['page_date_time'],
+                      reverse=True)
 
     def get_tags_list(self):
         return sorted([{"page_url": "/tag/{0}.html".format(tag),
                         "page_title": tag,
                         "page_brefing": len(items)}
-                       for tag, items in self.tags.iteritems()], reverse=True)
+                       for tag, items in self.tags.iteritems()],
+                      key=lambda x: x['page_brefing'],
+                      reverse=True)
 
     def get_latest_posts(self, number=ITEMS_PER_PAGE):
         posts = sorted(self.content.items(),
-                       key=lambda x: x[1]['page_date_time'])[:ITEMS_PER_PAGE]
+                       key=lambda x: x[1]['page_date_time'],
+                       reverse=True)[:number]
         return collections.OrderedDict(posts)
 
