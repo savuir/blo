@@ -13,6 +13,7 @@
  * Markdown with use of meta-tags to customize pages more with different data.
  * Code highlight with Pygments.
  * RSS feed generation
+ * Pagination
 
 
 ## Installation
