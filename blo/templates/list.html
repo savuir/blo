@@ -18,4 +18,19 @@
         <p>{{ item['page_briefing'] }}</p>
         <hr />
       {% endfor %}
+      {% if total_pages > 0 %}
+              <ul class="pagination">
+                {% for page in range(total_pages) %}
+                    {% if page_number == page %}
+                        <li class="active"><a href="#">{{ page_number }} <span class="sr-only">(current)</span></a></li>
+                    {% else %}
+                        {% if tag %}
+                            <li><a href="/tag/{{ tag }}/page{{ page }}.html">{{ page }}</a></li>
+                        {% else %}
+                            <li><a href="/page{{ page }}.html">{{ page }}</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+              </ul>
+      {% endif %}
 {% endblock %}

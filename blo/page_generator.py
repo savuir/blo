@@ -12,18 +12,24 @@ import PyRSS2Gen
 from content_aggregator import ContentAggregator
 
 
+def split_into_pages(items, per_page):
+    return [items[i:i + per_page] for i in range(0, len(items), per_page)]
+
+
 class PageGenerator:
     def __init__(self, config):
         self.config = config
         self.jinja_env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(self.config['template_dir']))
-        self.md = markdown.Markdown(extensions=['markdown.extensions.meta',
-                                                'markdown.extensions.codehilite'])
-        self.content_aggregator = ContentAggregator()
+        self.md = markdown.Markdown(
+            extensions=['markdown.extensions.meta',
+                        'markdown.extensions.codehilite'])
+        self.content_aggregator = ContentAggregator(config)
 
     def _generate_html(self, template_name, page_vars):
         template = self.jinja_env.get_template('{0}.html'.format(template_name))
-        page_vars.update({"site_{0}".format(k): v for k, v in self.config['site'].iteritems()})
+        page_vars.update({"site_{0}".format(k): v
+                          for k, v in self.config['site'].iteritems()})
         return template.render(page_vars)
 
     def _generate_xml_rss(self):
@@ -53,20 +59,35 @@ class PageGenerator:
         }
         return self._generate_html('stat', page_vars)
 
-    def _generate_html_tag(self, tag):
-        page_vars = {
-            'page_title': "Posts with tag '{0}'".format(tag),
-            'page_items': self.content_aggregator.get_content_items(tag)
-        }
-        return self._generate_html('list', page_vars)
+    def _generate_html_tag_pages(self, tag):
+        items = self.content_aggregator.get_content_items(tag)
+        pages = split_into_pages(items, self.config['items_per_page'])
+        items_pages = []
+        for page_number, item_set in enumerate(pages):
+            page_vars = {
+                'page_title': "Posts with tag '{0}'".format(tag),
+                'tag': tag,
+                'page_items': item_set,
+                'page_number': page_number,
+                'total_pages': len(pages)
+            }
+            items_pages.append(self._generate_html('list', page_vars))
+        return items_pages
 
     def _generate_html_index(self):
-        page_vars = {
-            'page_title': self.config['site']['title'],
-            'page_briefing': self.config['site']['briefing'],
-            'page_items': self.content_aggregator.get_content_items()
-        }
-        return self._generate_html('list', page_vars)
+        items = self.content_aggregator.get_content_items()
+        pages = split_into_pages(items, self.config['items_per_page'])
+        items_pages = []
+        for page_number, item_set in enumerate(pages):
+            page_vars = {
+                'page_title': self.config['site']['title'],
+                'page_briefing': self.config['site']['briefing'],
+                'page_items': item_set,
+                'page_number': page_number,
+                'total_pages': len(pages)
+            }
+            items_pages.append(self._generate_html('list', page_vars))
+        return items_pages
 
     def _generate_html_page_and_path(self, content):
         """
@@ -119,6 +140,13 @@ class PageGenerator:
             rss_page.write_xml(rss_file, encoding='utf-8')
 
     def generate_all(self):
+        """
+        index.html - main page (first page for all posts)
+        page{page_number}.html  pages for all posts
+        tags.html - list of tags
+        tag/{tag_name}.html - first page for items of tag
+        tag/{tag_name}/page{page_number}.html - pages for items of tag
+        """
         # render page
         for draft in os.listdir(self.config['pages_dir']):
             with open(os.path.join(self.config['pages_dir'], draft)) as f:
@@ -128,15 +156,24 @@ class PageGenerator:
             self._create_html_file(html_page, html_page_path)
 
         # render index page
-        html_page = self._generate_html_index()
-        self._create_html_file(html_page, 'index.html')
+        html_pages = self._generate_html_index()
+        for page_number, html_page in enumerate(html_pages):
+            self._create_html_file(
+                html_page, 'page{0}.html'.format(page_number))
+        # shortcut for the first page
+        self._create_html_file(html_pages[0], 'index.html')
 
         # render tags lists
         for tag, page_list in self.content_aggregator.tags.iteritems():
-            html_page = self._generate_html_tag(tag)
-            self._create_html_file(
-                html_page,
+            html_pages = self._generate_html_tag_pages(tag)
+            for page_number, html_page in enumerate(html_pages):
+                self._create_html_file(html_page,
+                    'tag/{0}/page{1}.html'.format(
+                        tag.replace(' ', '-'), page_number))
+            # shortcut for the first page
+            self._create_html_file(html_pages[0],
                 'tag/{0}.html'.format(tag.replace(' ', '-')))
+
         # render tags list page
         html_page = self._generate_html_tag_list()
         self._create_html_file(html_page, 'tags.html')

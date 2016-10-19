@@ -14,5 +14,6 @@
           "GitHub": "#"
         }
     },
-    "date_format": "%Y-%m-%d %H:%M"
+    "date_format": "%Y-%m-%d %H:%M",
+    "items_per_page": 12
 }

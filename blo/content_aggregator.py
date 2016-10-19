@@ -3,13 +3,12 @@ Module for content aggregation to give data
 """
 import collections
 
-ITEMS_PER_PAGE = 20
-
 
 class ContentAggregator:
-    def __init__(self):
+    def __init__(self, config):
         self.tags = collections.defaultdict(list)
         self.content = collections.defaultdict(dict)
+        self.config = config
 
     def get_content_items(self, tag=None):
         pages_list = []
@@ -30,7 +29,9 @@ class ContentAggregator:
                       key=lambda x: x['page_brefing'],
                       reverse=True)
 
-    def get_latest_posts(self, number=ITEMS_PER_PAGE):
+    def get_latest_posts(self, number=None):
+        if not number and self.config.get('items_per_page'):
+            number = self.config.get('items_per_page')
         posts = sorted(self.content.items(),
                        key=lambda x: x[1]['page_date_time'],
                        reverse=True)[:number]
