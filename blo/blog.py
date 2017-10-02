@@ -10,16 +10,13 @@ try:
     # import for python2.7
     from SimpleHTTPServer import SimpleHTTPRequestHandler
     import BaseHTTPServer
+    from page_generator import PageGenerator
 except ImportError:
     # import for python3
     from http.server import SimpleHTTPRequestHandler
     from http.server import HTTPServer
-try:
-    # import for python2.7
-    from page_generator import PageGenerator
-except ImportError:
-    # import for python3
     from .page_generator import PageGenerator
+    
 
 
 log = logging.getLogger(__name__)
