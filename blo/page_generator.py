@@ -9,7 +9,12 @@ import jinja2
 import markdown
 import PyRSS2Gen
 
-from content_aggregator import ContentAggregator
+try:
+    # python2.7 import
+    from content_aggregator import ContentAggregator
+except ImportError:
+    # python3 import
+    from .content_aggregator import ContentAggregator
 
 
 def split_into_pages(items, per_page):
