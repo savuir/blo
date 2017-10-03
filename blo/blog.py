@@ -6,10 +6,17 @@ import shutil
 from datetime import datetime
 import logging
 
-import SimpleHTTPServer
-import BaseHTTPServer
+try:
+    # import for python2.7
+    from SimpleHTTPServer import SimpleHTTPRequestHandler
+    from BaseHTTPServer import HTTPServer
+except ImportError:
+    # import for python3
+    from http.server import SimpleHTTPRequestHandler
+    from http.server import HTTPServer
 
-from page_generator import PageGenerator
+from .page_generator import PageGenerator
+    
 
 
 log = logging.getLogger(__name__)
@@ -23,8 +30,8 @@ class BlogAction:
         """ Run web-server to test static site """
         os.chdir(self.config["render_dir"])
         server_addr = ('localhost', 8000)
-        request_handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-        httpd = BaseHTTPServer.HTTPServer(server_addr, request_handler)
+        request_handler = SimpleHTTPRequestHandler
+        httpd = HTTPServer(server_addr, request_handler)
         log.info("Serving at http://{0}:{1}".format(*server_addr))
         httpd.serve_forever()
 
@@ -81,7 +88,13 @@ def main():
         if len(opts.action) == 1:
             log.info("Add blog folder name")
             return 1
-        blog_dir = unicode(opts.action[1], 'utf-8')
+        #
+        try:
+            # for python2.7
+            blog_dir = unicode(opts.action[1], 'utf-8')
+        except NameError:
+            # for python3
+            blog_dir = opts.action[1]
         create_blog(blog_dir)
         return 0
 
@@ -96,7 +109,12 @@ def main():
     if opts.action[0] == 'serve':
         blog_action.serve()
     elif opts.action[0] == 'post':
-        slug = unicode(opts.action[1], 'utf-8')
+        try:
+            # for python2.7
+            slug = unicode(opts.action[1], 'utf-8')
+        except NameError:
+            # for python3
+            slug = opts.action[1]
         blog_action.post(slug, opts.type)
 
 

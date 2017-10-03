@@ -12,7 +12,7 @@ class ContentAggregator:
 
     def get_content_items(self, tag=None):
         pages_list = []
-        for page_url, page_vars in self.content.iteritems():
+        for page_url, page_vars in iter(self.content.items()):
             if tag and tag not in page_vars['page_tags']:
                 continue
             page_vars['page_url'] = page_url
@@ -25,7 +25,7 @@ class ContentAggregator:
         return sorted([{"page_url": "/tag/{0}.html".format(tag),
                         "page_title": tag,
                         "page_brefing": len(items)}
-                       for tag, items in self.tags.iteritems()],
+                       for tag, items in iter(self.tags.items())],
                       key=lambda x: x['page_brefing'],
                       reverse=True)
 

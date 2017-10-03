@@ -9,7 +9,12 @@ import jinja2
 import markdown
 import PyRSS2Gen
 
-from content_aggregator import ContentAggregator
+try:
+    # python2.7 import
+    from content_aggregator import ContentAggregator
+except ImportError:
+    # python3 import
+    from .content_aggregator import ContentAggregator
 
 
 def split_into_pages(items, per_page):
@@ -28,13 +33,13 @@ class PageGenerator:
 
     def _generate_html(self, template_name, page_vars):
         template = self.jinja_env.get_template('{0}.html'.format(template_name))
-        page_vars.update({"site_{0}".format(k): v
-                          for k, v in self.config['site'].iteritems()})
+        page_vars.update({"site_{0}".format(k): v 
+            for k, v in iter(self.config['site'].items())})
         return template.render(page_vars)
 
     def _generate_xml_rss(self):
         posts = []
-        for link, content in self.content_aggregator.get_latest_posts().iteritems():
+        for link, content in iter(self.content_aggregator.get_latest_posts().items()):
             link = "{0}/{1}".format(self.config['site']['url'], link)
             posts.append(
                 PyRSS2Gen.RSSItem(
@@ -96,8 +101,13 @@ class PageGenerator:
         :return:
         """
         # collect page variables
-        page_html = self.md.convert(content.decode('utf-8'))
-        page_vars = {"page_{0}".format(k): v[0] for k, v in self.md.Meta.iteritems()}
+        try:
+            # for python2.7
+            page_html = self.md.convert(content.decode('utf-8'))
+        except AttributeError:
+            # for python3
+            page_html = self.md.convert(content)
+        page_vars = {"page_{0}".format(k): v[0] for k, v in iter(self.md.Meta.items())}
         page_vars['page_content'] = page_html
         page_vars['page_author'] = self.config['site']['author']
         page_vars['page_date'] = page_vars.get('page_date_time', '').split(' ')[0]
@@ -164,7 +174,7 @@ class PageGenerator:
         self._create_html_file(html_pages[0], 'index.html')
 
         # render tags lists
-        for tag, page_list in self.content_aggregator.tags.iteritems():
+        for tag, page_list in iter(self.content_aggregator.tags.items()):
             html_pages = self._generate_html_tag_pages(tag)
             for page_number, html_page in enumerate(html_pages):
                 self._create_html_file(html_page,
@@ -173,7 +183,6 @@ class PageGenerator:
             # shortcut for the first page
             self._create_html_file(html_pages[0],
                 'tag/{0}.html'.format(tag.replace(' ', '-')))
-
         # render tags list page
         html_page = self._generate_html_tag_list()
         self._create_html_file(html_page, 'tags.html')
