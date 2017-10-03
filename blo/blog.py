@@ -9,13 +9,13 @@ import logging
 try:
     # import for python2.7
     from SimpleHTTPServer import SimpleHTTPRequestHandler
-    import BaseHTTPServer
-    from page_generator import PageGenerator
+    from BaseHTTPServer import HTTPServer
 except ImportError:
     # import for python3
     from http.server import SimpleHTTPRequestHandler
     from http.server import HTTPServer
-    from .page_generator import PageGenerator
+
+from .page_generator import PageGenerator
     
 
 
@@ -31,7 +31,7 @@ class BlogAction:
         os.chdir(self.config["render_dir"])
         server_addr = ('localhost', 8000)
         request_handler = SimpleHTTPRequestHandler
-        httpd = BaseHTTPServer.HTTPServer(server_addr, request_handler)
+        httpd = HTTPServer(server_addr, request_handler)
         log.info("Serving at http://{0}:{1}".format(*server_addr))
         httpd.serve_forever()
 
