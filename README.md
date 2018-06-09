@@ -33,6 +33,7 @@ Create a new blog:
 Create a new page or post:
 
      blo post hello-world 
+     blo post about --type page
      
 You can also use pipe with your favorite editor:
 

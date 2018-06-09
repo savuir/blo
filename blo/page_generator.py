@@ -4,6 +4,7 @@ Module for html page generation using drafts.
 import codecs
 import os
 from datetime import datetime
+from pprint import pprint
 
 import jinja2
 import markdown
@@ -70,7 +71,7 @@ class PageGenerator:
         items_pages = []
         for page_number, item_set in enumerate(pages):
             page_vars = {
-                'page_title': "Posts with tag '{0}'".format(tag),
+                'page_title': self.config['lang'][self.config['site']['lang']]['Posts_with_tag']+" '{0}'".format(tag),
                 'tag': tag,
                 'page_items': item_set,
                 'page_number': page_number,
