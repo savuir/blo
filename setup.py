@@ -13,7 +13,7 @@ setup(
             'blo = blo.blog:main',
         ],
     },
-    install_requires=['jinja2', 'markdown', 'PyRSS2Gen'],
+    install_requires=['jinja2', 'markdown', 'PyRSS2Gen', 'Pygments'],
     package_data={'': ['blo/default.json', 'blo/draft_templates.json',]},
     include_package_data=True,
     url='https://github.com/savuir/blo',  # use the URL to the github repo
