@@ -21,6 +21,14 @@ def split_into_pages(items, per_page):
     return [items[i:i + per_page] for i in range(0, len(items), per_page)]
 
 
+class BloError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return self.message
+
+
 class PageGenerator:
     def __init__(self, config):
         self.config = config
@@ -109,6 +117,8 @@ class PageGenerator:
         page_vars['page_content'] = page_html
         page_vars['page_author'] = self.config['site']['author']
         page_vars['page_date'] = page_vars.get('page_date_time', '').split(' ')[0]
+        if 'page_tags' not in page_vars:
+            raise BloError("Missing tags")
         page_vars['page_tags'] = [tag for tag in page_vars['page_tags'].split(', ') if tag]
         if 'page_date_time' in page_vars:
             page_vars['page_date_time'] = \
@@ -157,10 +167,16 @@ class PageGenerator:
         """
         # render page
         for draft in os.listdir(self.config['pages_dir']):
-            with open(os.path.join(self.config['pages_dir'], draft)) as f:
+            path = os.path.join(self.config['pages_dir'], draft)
+            with open(path) as f:
                 content = f.read()
-
-            html_page, html_page_path = self._generate_html_page_and_path(content)
+            try:
+                html_page, html_page_path = self._generate_html_page_and_path(content)
+            except BloError as blo_error:
+                blo_error.message += " in %s" % path
+                raise
+            except Exception as exc:
+                raise BloError("Caught exception while generating %s" % path) from exc
             self._create_html_file(html_page, html_page_path)
 
         # render index page
