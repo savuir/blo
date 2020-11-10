@@ -15,5 +15,15 @@
         }
     },
     "date_format": "%Y-%m-%d %H:%M",
-    "items_per_page": 12
+    "items_per_page": 12,
+    "lang":{
+        "fa":{
+           "Posts_with_tag": "پستهای تگ شده با ",
+           "List_of_tags": "لیست تگها"
+        },
+        "en":{
+           "Posts_with_tag":"Posts with tag ",
+           "List_of_tags": "List of tags"
+        }
+    }
 }

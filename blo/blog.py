@@ -15,7 +15,7 @@ except ImportError:
     from http.server import SimpleHTTPRequestHandler
     from http.server import HTTPServer
 
-from .page_generator import PageGenerator
+from page_generator import PageGenerator
     
 
 
