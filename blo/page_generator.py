@@ -34,7 +34,7 @@ class PageGenerator:
         self.config = config
         self.jinja_env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(self.config['template_dir']))
-        self.md = markdown.Markdown(extensions=['meta', 'codehilite'])
+        self.md = markdown.Markdown(extensions=['meta', 'codehilite', 'fenced_code', 'tables'])
         self.content_aggregator = ContentAggregator(config)
 
     def _generate_html(self, template_name, page_vars):
