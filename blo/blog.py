@@ -117,6 +117,8 @@ def main():
             slug = opts.action[1]
         blog_action.post(slug, opts.type)
 
+    return 0
+
 
 if __name__ == "__main__":
     log.addHandler(logging.StreamHandler(sys.stdout))
